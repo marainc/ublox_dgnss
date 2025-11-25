@@ -76,6 +76,7 @@
 #include "ublox_ubx_interfaces/srv/reset_odo.hpp"
 
 #include "rtcm_msgs/msg/message.hpp"
+#include "nmea_msgs/msg/sentence.hpp"
 
 using namespace std::chrono_literals;
 using std::placeholders::_1;
@@ -278,6 +279,8 @@ public:
       "ubx_sec_sig_log", qos, pub_options);
     rtcm_pub_ = this->create_publisher<rtcm_msgs::msg::Message>(
       "rtcm", 10);
+    nmea_pub_ = this->create_publisher<nmea_msgs::msg::Sentence>(
+      "nmea", qos, pub_options);
 
     // ros2 parameter call backs
     parameters_callback_handle_ =
@@ -659,6 +662,7 @@ private:
   rclcpp::Publisher<ublox_ubx_msgs::msg::UBXSecSig>::SharedPtr ubx_sec_sig_pub_;
   rclcpp::Publisher<ublox_ubx_msgs::msg::UBXSecSigLog>::SharedPtr ubx_sec_sig_log_pub_;
   rclcpp::Publisher<rtcm_msgs::msg::Message>::SharedPtr rtcm_pub_;
+  rclcpp::Publisher<nmea_msgs::msg::Sentence>::SharedPtr nmea_pub_;
 
   rclcpp::Subscription<ublox_ubx_msgs::msg::UBXEsfMeas>::SharedPtr ubx_esf_meas_sub_;
   rclcpp::Subscription<rtcm_msgs::msg::Message>::SharedPtr rtcm_sub_;
@@ -1448,6 +1452,12 @@ public:
           }
         }
         RCLCPP_INFO(get_logger(), "nmea: %s", buf);
+        
+        nmea_msgs::msg::Sentence nmea_msg;
+        nmea_msg.header.stamp = ts;
+        nmea_msg.header.frame_id = frame_id_;
+        nmea_msg.sentence = std::string(reinterpret_cast<const char*>(buf)) + "\r\n";
+        nmea_pub_->publish(nmea_msg);
       } else {
         // UBX starts with 0x65 0x62
         if (len > 2 && buf[0] == ubx::UBX_SYNC_CHAR_1 && buf[1] == ubx::UBX_SYNC_CHAR_2) {

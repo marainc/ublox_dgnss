@@ -29,6 +29,7 @@ find_package(std_msgs REQUIRED)
 find_package(ublox_ubx_msgs REQUIRED)
 find_package(ublox_ubx_interfaces REQUIRED)
 find_package(rtcm_msgs REQUIRED)
+find_package(nmea_msgs REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(libusb REQUIRED libusb-1.0)
@@ -53,6 +54,7 @@ target_link_options(ublox_dgnss_components PRIVATE
 
 target_link_libraries(ublox_dgnss_components PUBLIC
   ${rtcm_msgs_TARGETS}
+  ${nmea_msgs_TARGETS}
   ${std_msgs_TARGETS}
   ${ublox_ubx_interfaces_TARGETS}
   ${ublox_ubx_msgs_TARGETS}

@@ -17,6 +17,7 @@
   <depend>ublox_ubx_msgs</depend>
   <depend>ublox_ubx_interfaces</depend>
   <depend>rtcm_msgs</depend>
+  <depend>nmea_msgs</depend>
   <depend>ament_index_cpp</depend>
 
   <build_depend>pkg-config</build_depend>
